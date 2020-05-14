@@ -9,6 +9,7 @@ Please see video <a href="https://youtu.be/cRYwhLevv-4">ZoteroBib-Add-On</a>
 ![ZoteroBib](https://raw.githubusercontent.com/jpdenzer/Primo-VE-ZoteroBib-Add-On/master/docs/zoterobibgif.gif)
 
 ## Add code to custom.js file
+
 1. Add the js code block from <b>Primo-VE-ZoteroBib-Add-On.js</b>into your main function in the Primo <b>custom.js</b> file
 
 ```js
@@ -39,6 +40,20 @@ insertActions([{
   action: "https://zbib.org/import?q="
 }]);
 ```
+
+3. Place the function with this block of code outside the main Function
+```js
+function getZoterobibq(addata, risformattype)
+{
+  .
+  .
+  .
+}
+return "01";
+}
+}
+```
+
 ## Customize add-on name and icon (optional).
 <b>name:</b> can be modified to any text you want.</br>
 <b>set: 'primo-actions'</b> and<b> name: 'easybib'</b> can be changed to use a different buit-in icon in Primo.
