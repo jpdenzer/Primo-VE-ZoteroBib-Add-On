@@ -115,7 +115,7 @@ function getZoterobibq(addata, risformattype)
 					break;
 				}
 			}
-			return addata.isbn[i];
+			return addata.isbn[i-1];
 		}else
 			return addata.isbn;
 		break;
