@@ -28,10 +28,17 @@ function insertActions(actions) {
 
 						if (action.type === 'urlredirectzotero') {
 							var zoterobibq = "0";
+							var url = new URL(document.location.href);
+							var hostname = url.hostname;
+							 console.log(url.hostname);
+							var context = prmActionCtrl.item.context
+							var recordid = prmActionCtrl.item.pnx.control.recordid;
+							var linktopnx ="https://"+url.hostname+"/primo_library/libweb/webservices/rest/primo-explore/v1/pnxs/xml/"+context+"/"+recordid+"?inst="+action.institution+"%26showPnx=true";
 
 							  //check is RISTYPE Exists
 							  if (typeof prmActionCtrl.item.pnx.addata.ristype == 'undefined'){
 								console.log("format" + prmActionCtrl.item.pnx.addata.format);
+								zoterobibq = linktopnx;
 							  }else{
 
 								switch(prmActionCtrl.item.pnx.addata.ristype.toString().toLowerCase()) {
@@ -97,27 +104,32 @@ function insertActions(actions) {
 			set: 'primo-actions',
 			name: 'easybib'
 		},
-		action: "https://zbib.org/import?q="
+		action: "https://zbib.org/import?q=",
+		institution : "YOUR_INSTITUTION_CODE" //Insert your institution code here 
 	}]);
 
 
 //Place this function outside the main function
 //Function to get ISBN, DOI, PMID,arXiv ID, or title
-function getZoterobibq(addata, risformattype)
+function getZoterobibq(addata, risformattype, linktopnx)
 {
 	switch(risformattype) {
 	  case 0: // book
-		var reg = new RegExp('^\\d+$');
-		if(addata.isbn.length > 1){
-			for (i = 0; i < addata.isbn.length; i++) {
-				if(reg.test(addata.isbn[i])){
-					//console.log(addata.isbn[i]);
-					break;
+		if (typeof addata.doi !== 'undefined')
+			return addata.doi;
+		if (typeof addata.isbn !== 'undefined')
+			var reg = new RegExp('^\\d+$');
+			if(addata.isbn.length > 1){
+				for (i = 0; i < addata.isbn.length; i++) {
+					if(reg.test(addata.isbn[i])){
+						//console.log(addata.isbn[i]);
+						break;
+					}
 				}
-			}
-			return addata.isbn[i];
-		}else
-			return addata.isbn;
+				return addata.isbn[i];
+			}else
+				return addata.isbn;
+		return linktopnx;
 		break;
 	  case 1: //jour
 		if (typeof addata.doi !== 'undefined')
@@ -126,8 +138,7 @@ function getZoterobibq(addata, risformattype)
 			return addata.pmid;
 		if (typeof addata.lad21 !== 'undefined')
 			return addata.lad21.toString().replace(/\barXiv.org:\b~?/g, '');
-		if (typeof addata.atitle !== 'undefined')
-			return addata.atitle;
+		return linktopnx;
 		break;
 	  case 2: //gen
 		if (typeof addata.doi !== 'undefined')
@@ -136,27 +147,18 @@ function getZoterobibq(addata, risformattype)
 			return addata.pmid;
 		if (typeof addata.lad21 !== 'undefined')
 			return addata.lad21.toString().replace(/\barXiv.org:\b~?/g, '');
-		if (typeof addata.atitle !== 'undefined')
-			return addata.atitle;
+		return linktopnx;
 		break;
 	  case 3: //thesis
 		if (typeof addata.doi !== 'undefined')
 			return addata.doi;
 		if (typeof addata.pmid !== 'undefined')
 			return addata.pmid;
-		if (typeof addata.lad21 !== 'undefined'){
+		if (typeof addata.lad21 !== 'undefined')
 			return addata.lad21.toString().replace(/\barXiv.org:\b~?/g, '');
-		if (typeof addata.atitle !== 'undefined')
-			return addata.atitle;
-		}
+		return linktopnx;
 		break;
-	  default:// will use the title if no ISBN, DOI, PMID,arXiv ID
-		if(typeof addata.atitle !== 'undefined'){
-			return addata.atitle;
-		}
-		if(typeof addata.btitle !== 'undefined'){
-			return addata.btitle;
-		}
-		return "01";
+	  default:// will use the link to the PNX record if no ISBN, DOI, PMID,arXiv ID
+	  	return linktopnx;
 	}
 }
