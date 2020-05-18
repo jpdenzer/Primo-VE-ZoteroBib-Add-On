@@ -28,6 +28,7 @@ function insertActions(actions) {
 
 						if (action.type === 'urlredirectzotero') {
 							var zoterobibq = "0";
+							//URL To pnx record
 							var url = new URL(document.location.href);
 							var hostname = url.hostname;
 							 console.log(url.hostname);
