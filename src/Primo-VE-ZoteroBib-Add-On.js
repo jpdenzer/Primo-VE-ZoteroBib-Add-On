@@ -111,8 +111,7 @@ function getZoterobibq(addata, risformattype)
 		if(addata.isbn.length > 1){
 			for (i = 0; i < addata.isbn.length; i++) {
 				if(reg.test(addata.isbn[i])){
-					//console.log(addata.isbn[i]);
-					break;
+					return addata.isbn[i];				
 				}
 			}
 			return addata.isbn[i-1];
